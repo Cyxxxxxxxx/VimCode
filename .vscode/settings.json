@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "*.json": "json",
+        "iostream": "cpp",
+        "ostream": "cpp",
+        "new": "cpp",
+        "queue": "cpp",
+        "bitset": "cpp",
+        "chrono": "cpp",
+        "algorithm": "cpp"
+    }
+}
