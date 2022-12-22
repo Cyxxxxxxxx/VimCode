@@ -15,10 +15,25 @@
 
 using namespace std;
 
-void 
+//init Array
+void InitArr(int AimArr[]){
+    srand((int)time(NULL));
+    for (int i = 0; i <16;i++){
+        AimArr[i] = (rand()%90)+10;
+    }
+}
+
+
+
+
+
+
 
 int mian(){
-
+    int AimArr[16]={},AimArrCopy[16]={};	
+    InitArr(AimArr);
+    memcpy(AimArrCopy,AimArr,sizeof(AimArr));
+     
 
 
 }
