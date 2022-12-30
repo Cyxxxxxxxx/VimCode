@@ -8,6 +8,22 @@
         "bitset": "cpp",
         "chrono": "cpp",
         "algorithm": "cpp",
-        "initializer_list": "cpp"
+        "initializer_list": "cpp",
+        "cstring": "cpp",
+        "iomanip": "cpp",
+        "*.tcc": "cpp",
+        "mutex": "cpp",
+        "thread": "cpp",
+        "ctime": "cpp",
+        "future": "cpp",
+        "limits": "cpp",
+        "numeric": "cpp",
+        "ratio": "cpp",
+        "shared_mutex": "cpp",
+        "streambuf": "cpp",
+        "tuple": "cpp",
+        "type_traits": "cpp",
+        "utility": "cpp",
+        "fstream": "cpp"
     }
 }
