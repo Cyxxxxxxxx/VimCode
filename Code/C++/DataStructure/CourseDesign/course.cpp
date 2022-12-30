@@ -64,8 +64,8 @@ void CreateAMGraph(AMGraph &G){
         G.vexs[i].ID = id[i];
         G.vexs[i].StationName = name[i];
     }
-    for (int i = 0; i < G.arcnum; i++) {
-        for (int j = 0; j < G.arcnum; j++) {
+    for (int i = 0; i < G.vexnum; i++) {
+        for (int j = 0; j < G.vexnum; j++) {
             G.arcs[i][j].KM = MaxInt;
             G.arcs[i][j].Cost = 32767.0;
             G.arcs[i][j].Time = MaxInt;
@@ -77,7 +77,7 @@ void CreateAMGraph(AMGraph &G){
     float Time[10]={8.0,2.3,2.5,1.5,3.0,1.2,5.0,2.0,7.0,4.0};
     int Money[10]={885,202,225,148,283,112,495,162,684,386};
     for (int i = 0; i < G.arcnum; i++) {
-        int v1 = start[i], v2 = end[i];
+        int v1 = start[i]-1, v2 = end[i]-1;
         G.arcs[v1][v2].KM = KM[i];
         G.arcs[v1][v2].Time = Time[i];
         G.arcs[v1][v2].Cost = Money[i];
@@ -102,12 +102,8 @@ bool S[MaxVecNum]={};//记录从源点v0到终点vi是否已经被确定最短�
 VertexType Path[MaxVecNum]={};//path记录的是v0到vi结点的路径上vi结点的前驱结点
 int D[ArcNum]={};//D记录的是从源头v0到vi的最短路径长度
 void MinPathByKm(AMGraph G,string station){
-    cout<<station<<endl;
-    cout<<"111"<<endl;
     int v0 = locateId(G, station);
-    cout<<"333"<<endl;
     for (int i = 0; i < G.vexnum; i++) {
-        cout<<"444"<<endl;
         S[i] = false;
         D[i] = G.arcs[v0][i].KM;
         if (D[i] < MaxInt) Path[i] = G.vexs[v0];
@@ -117,10 +113,8 @@ void MinPathByKm(AMGraph G,string station){
         }
     }
     S[v0] = true;
-    cout<<"111"<<endl;
     D[v0] = 0;
-    int v=0;
-    cout<<"555"<<endl;
+    int v;
     for (int i = 1; i < G.vexnum; i++) {
         int min = MaxInt;
         for (int j = 0; j < G.vexnum; j++) {
@@ -144,7 +138,7 @@ void PrintMinPathKM(AMGraph G, string startStation, string endStation) {
     int v1, v2;
     v1 = locateId(G, startStation);
     v2 = locateId(G, endStation);
-    cout << startStation << "-->" << endStation << "最短路径: " << D[v2] <<"公里" << endl;
+    cout << startStation << "-->" << endStation << " 最短距离: " << D[v2] <<"公里" << endl;
     int d = v2;
     int i = 0;
     num[i].ID = v2;
@@ -155,9 +149,9 @@ void PrintMinPathKM(AMGraph G, string startStation, string endStation) {
         d = Path[d].ID-1;
         i++;
     }
-    cout << "最短路径是: ";
+    cout << "路线为: ";
     for (int v = i; v >= 0; v--) {
-        cout << num[v].StationName<<"->";
+        cout << num[v].StationName<<" ";
     }
     cout << endl;
 }
@@ -202,21 +196,20 @@ void PrintMinPathTime(AMGraph G, string startStation, string endStation) {
     int v1, v2;
     v1 = locateId(G, startStation);
     v2 = locateId(G, endStation);
-    cout << startStation << "-->" << endStation << "最短时间:" << D1[v2] << "小时" << endl;
+    cout << startStation << "-->" << endStation << " 最少耗时: " << D1[v2] << "小时" << endl;
     stack<VertexType> S;
     int d = v2;
     S.push(G.vexs[v2]);
-    while (G.vexs[d].ID != v1 + 1)
-    {
+    while (G.vexs[d].ID != v1 + 1){
         S.push(Path[d]);
         d = Path[d].ID - 1;
     }
-    cout << "路线为:";
+    cout << "路线为: ";
     VertexType V;
     while (!S.empty()) {
         V = S.top();
         S.pop();
-        cout << V.StationName << "->";
+        cout << V.StationName<< " ";
     }
     cout << endl;
 }
@@ -263,12 +256,11 @@ void PrintMinPathCost(AMGraph G, string startStation, string endStation) {
     int v1, v2;
     v1 = locateId(G, startStation);
     v2 = locateId(G, endStation);
-    cout << startStation << "->" << endStation << "最小价格: " << D2[v2] << "元" << endl;
+    cout << startStation << "->" << endStation << " 最少花费: " << D2[v2] << "元" << endl;
     stack<VertexType> S;
     int d = v2;
     S.push(G.vexs[v2]);
-    while (G.vexs[d].ID != v1 + 1)
-    {
+    while (G.vexs[d].ID != v1 + 1){
         S.push(Path[d]);
         d = Path[d].ID - 1;
     }
@@ -277,7 +269,7 @@ void PrintMinPathCost(AMGraph G, string startStation, string endStation) {
     while (!S.empty()) {
         V = S.top();
         S.pop();
-        cout << V.StationName << "->";
+        cout << V.StationName << " ";
     }
     cout << endl;
 }
@@ -300,7 +292,7 @@ void MinPathByStationCount(AMGraph G,string startStation){
         V = Q.front();
         Q.pop();
         for (int i = 0; i < G.vexnum; i++) {
-            //这里如果两点间无边,边里面的三个值都是MAXInt,故可三选一
+            //这里如果两点间无边,边里面的三个值都是MaxInt,故三选一
             if (G.arcs[V.ID-1][i].KM < MaxInt && dist[i] == -1) {
                 dist[i] = dist[V.ID-1] + 1;
                 Path3[i] = V;
@@ -314,12 +306,11 @@ void PrintUnweightedPath(AMGraph G,string startStation,string endStation) {
     int v1, v2;
     v1 = locateId(G, startStation);
     v2 = locateId(G, endStation);
-    cout << startStation << "->" << endStation << "最小中转次数: " << dist[v2] << "次" << endl;
+    cout << startStation << "->" << endStation << " 最小中转: " << dist[v2] << "次" << endl;
     stack<VertexType> S;
     int d = v2;
     S.push(G.vexs[v2]);
-    while (G.vexs[d].ID != v1 + 1)
-    {
+    while (G.vexs[d].ID != v1 + 1){
         S.push(Path3[d]);
         d = Path3[d].ID - 1;
     }
@@ -328,29 +319,31 @@ void PrintUnweightedPath(AMGraph G,string startStation,string endStation) {
     while (!S.empty()) {
         V = S.top();
         S.pop();
-        cout << V.StationName << "->";
+        cout << V.StationName << " ";
     }
     cout << endl;
 }
 
 void Show(){
-    cout << "    **********************************************\n";
-    cout << "    ----------------------------------------------\n";
-    cout << "        1-距离短 2-最便宜 3-最快抵达 4-最小中转\n";
-    cout << "    ----------------------------------------------\n";
-    cout << "    站台: 北京  西安  郑州  徐州  成都  广州  上海\n";
-    cout << "    ----------------------------------------------\n";
-    cout << "    **********************************************\n";
+    cout << "    *****************************************************\n";
+    cout << "    -----------------------------------------------------\n";
+    cout << "            1-距离短 2-最便宜 3-最快抵达 4-最小中转\n";
+    cout << "    -----------------------------------------------------\n";
+    cout << "    站台:1.北京 2.西安 3.郑州 4.徐州 5.成都 6.广州 7.上海\n";
+    cout << "    -----------------------------------------------------\n";
+    cout << "    *****************************************************\n";
 }
 
 int main(){
-    system("chcp 65001");   
+    // system("chcp 65001");
     AMGraph G;
     CreateAMGraph(G);
     // PrintAMGraph(G);
     int c;
     while (1){
         Show();
+        //后面所说的就是这里  string的字符串  这样写   Run Code时 可能会从这里跳到下一次循环 \
+        导致死循环    大概率时系统变量或编码设置出错
         string startStation, endStation;
         cout << "选择的查询方式：";
         cin >> c;
@@ -358,10 +351,26 @@ int main(){
             cout<< "起始站--终点站：";
             cin >> startStation >> endStation;
         }
-        cout<<startStation<<"\t"<<endStation<<endl;
+        //记录一个BUG: 查阅他人的回答，觉得， 可能目前该电脑环境问题 导致在终端输入的中文字符串无法读取，\
+        或读取为@、pp，或为空 导致无法为变量申请一块空间   抛出异常：std::bad_alloc\
+        所以 改用输入数字串  再判断对应赋值字符串
+        if (startStation=="1") startStation = "北京";
+        else if (startStation=="2") startStation = "西安";
+        else if (startStation=="3") startStation = "郑州";
+        else if (startStation=="4") startStation = "徐州";
+        else if (startStation=="5") startStation = "成都";
+        else if (startStation=="6") startStation = "广州";
+        else if (startStation=="7") startStation = "上海";
+        if (endStation=="1") endStation = "北京";
+        else if (endStation=="2") endStation = "西安";
+        else if (endStation=="3") endStation = "郑州";
+        else if (endStation=="4") endStation = "徐州";
+        else if (endStation=="5") endStation = "成都";
+        else if (endStation=="6") endStation = "广州";
+        else if (endStation=="7") endStation = "上海";
+
         switch (c){
         case 1: 
-            cout<<"111"<<endl;
             MinPathByKm(G, startStation);
             PrintMinPathKM(G, startStation, endStation);
             break;
@@ -373,20 +382,19 @@ int main(){
             MinPathByTime(G, startStation);
             PrintMinPathTime(G, startStation, endStation);
             break;
-        case 4: 
+        case 4:
             MinPathByStationCount(G, startStation);
             PrintUnweightedPath(G, startStation, endStation);
             break;
-        case 5: 
+        case 5:
             break;
         default:
             break;
         }
-        int ci;
-        cout<<"输入 0--退出：";cin>>ci;
-        if (ci==0) break;
-        system("cls");
+        string ci;
+        cout<<endl;
+        cout<<"输入 bye 退出程序：";cin>>ci;
+        if (ci=="bye") break;
+        // system("cls");
     }
 }
-
-
