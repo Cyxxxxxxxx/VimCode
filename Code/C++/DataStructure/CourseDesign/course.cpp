@@ -6,7 +6,7 @@
  ************************************************************************/
 
 #include <iostream>
-#include <cstring>
+#include <string>
 #include <stack>
 #include <queue>
 using namespace std;
@@ -32,13 +32,6 @@ typedef struct {
     VertexType vexs[MaxVecNum];
     int arcnum, vexnum;
 }AMGraph;
-
-//辅助数组Edge
-struct {
-    VertexType head;
-    VertexType tail;
-    ArcType weight;
-}Edge[ArcNum];
 
 int vexset[MaxVecNum];
 
@@ -87,16 +80,6 @@ void CreateAMGraph(AMGraph &G){
     }
 }
 
-void PrintAMGraph(AMGraph G){
-    for (int i = 0; i < G.vexnum; i++) {
-        for (int j = 0; j < G.vexnum; j++) {
-            cout << G.arcs[i][j].KM << "\t";
-        }
-        cout << "\n";
-    }
-}
-
-
 //最短距离KM
 bool S[MaxVecNum]={};//记录从源点v0到终点vi是否已经被确定最短长度
 VertexType Path[MaxVecNum]={};//path记录的是v0到vi结点的路径上vi结点的前驱结点
@@ -135,12 +118,9 @@ void MinPathByKm(AMGraph G,string station){
 
 VertexType num[MaxVecNum];
 void PrintMinPathKM(AMGraph G, string startStation, string endStation) {
-    int v1, v2;
-    v1 = locateId(G, startStation);
-    v2 = locateId(G, endStation);
+    int v1 = locateId(G, startStation),v2 = locateId(G, endStation);
     cout << startStation << "-->" << endStation << " 最短距离: " << D[v2] <<"公里" << endl;
-    int d = v2;
-    int i = 0;
+    int d = v2,i = 0;
     num[i].ID = v2;
     num[i].StationName = endStation;
     i++;
@@ -149,17 +129,19 @@ void PrintMinPathKM(AMGraph G, string startStation, string endStation) {
         d = Path[d].ID-1;
         i++;
     }
-    cout << "路线为: ";
+    string path;
+    int cost=0;float time=0.0;
     for (int v = i; v >= 0; v--) {
-        cout << num[v].StationName<<" ";
+        if (num[v-1].StationName!="") path += num[v-1].StationName+"->"; 
     }
-    cout << endl;
+    cout << "路线为: ";
+    for(int u = 0; u < path.size()-2; u++)  cout<<path[u];
 }
 
 //最短时间Time
-bool S1[MaxVecNum];//记录从源点v0到终点vi是否已经被确定最短长度
-VertexType Path1[MaxVecNum];//path记录的是v0到vi结点的路径上vi结点的前驱结点
-float D1[ArcNum];//D记录的是从源头v0到vi的最短路径长度
+bool S1[MaxVecNum];
+VertexType Path1[MaxVecNum];
+float D1[ArcNum];
 void MinPathByTime(AMGraph G, string station) {
     int v0 = locateId(G, station);
     for (int i = 0; i < G.vexnum; i++) {
@@ -204,22 +186,23 @@ void PrintMinPathTime(AMGraph G, string startStation, string endStation) {
         S.push(Path[d]);
         d = Path[d].ID - 1;
     }
-    cout << "路线为: ";
     VertexType V;
+    string path;
     while (!S.empty()) {
         V = S.top();
         S.pop();
-        cout << V.StationName<< " ";
+        path+=V.StationName+"->";
     }
-    cout << endl;
+    cout << "路线为: ";
+    for(int u = 0; u < path.size()-2; u++)  cout<<path[u];
 }
 
 
 
 //最小价格cost
-bool S2[MaxVecNum];//记录从源点v0到终点vi是否已经被确定
-VertexType Path2[MaxVecNum];//path记录的是v0到vi结点的路径上vi结点的前驱结点
-int D2[ArcNum];//D记录的是从源头v0到vi的最短路径长度
+bool S2[MaxVecNum];
+VertexType Path2[MaxVecNum];
+int D2[ArcNum];
 void MinPathByCost(AMGraph G, string station) {
     int v0 = locateId(G, station);
     for (int i = 0; i < G.vexnum; i++) {
@@ -264,14 +247,15 @@ void PrintMinPathCost(AMGraph G, string startStation, string endStation) {
         S.push(Path[d]);
         d = Path[d].ID - 1;
     }
-    cout << "路线为: ";
     VertexType V;
+    string path;
     while (!S.empty()) {
         V = S.top();
         S.pop();
-        cout << V.StationName << " ";
+        if (V.StationName!="")path+=V.StationName+"->";
     }
-    cout << endl;
+    cout << "路线为: ";
+    for(int u = 0; u < path.size()-2; u++)  cout<<path[u];
 }
 
 
@@ -314,14 +298,15 @@ void PrintUnweightedPath(AMGraph G,string startStation,string endStation) {
         S.push(Path3[d]);
         d = Path3[d].ID - 1;
     }
-    cout << "路线为: ";
     VertexType V;
+    string path;
     while (!S.empty()) {
         V = S.top();
         S.pop();
-        cout << V.StationName << " ";
+        path+= V.StationName+ "->";
     }
-    cout << endl;
+    cout << "路线为: ";
+    for(int u = 0; u < path.size()-2; u++)  cout<<path[u];
 }
 
 void Show(){
@@ -335,10 +320,9 @@ void Show(){
 }
 
 int main(){
-    // system("chcp 65001");
+    system("chcp 65001");
     AMGraph G;
     CreateAMGraph(G);
-    // PrintAMGraph(G);
     int c;
     while (1){
         Show();

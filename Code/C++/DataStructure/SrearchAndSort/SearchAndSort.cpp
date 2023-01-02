@@ -23,17 +23,24 @@ void InitArr(int AimArr[]){
     }
 }
 
+void PrintArr(int AimArr[]){
+    for(int i=0;i<16;i++){
+        cout<<AimArr[i]<<" ";
+    }
+    cout<<endl;
+}
 
 
 
 
 
 
-int mian(){
+int main(){
     int AimArr[16]={},AimArrCopy[16]={};	
     InitArr(AimArr);
     memcpy(AimArrCopy,AimArr,sizeof(AimArr));
-     
+    PrintArr(AimArr);
+    PrintArr(AimArrCopy);
 
 
 }
